@@ -16,10 +16,8 @@ def start(message):
         "Я генерирую случайные числа БЕЗ повторов 🎲\n\n"
         "Используй команду:\n"
         "/rand 1 10 3\n\n"
-        "Где:\n"
-        "1 — от\n"
-        "10 — до\n"
-        "3 — сколько чисел"
+        "Можно также:\n"
+        "/rand 1 50 (одно число)"
     )
 
 
@@ -29,14 +27,18 @@ def rand(message):
     try:
         parts = message.text.split()
 
-        if len(parts) < 4:
-            bot.send_message(message.chat.id, "❗ Пример: /rand 1 10 3")
+        # минимум 2 числа
+        if len(parts) < 3:
+            bot.send_message(message.chat.id, "❗ Пример: /rand 1 10 [3]")
             return
 
         a = int(parts[1])
         b = int(parts[2])
-        count = int(parts[3])
 
+        # если не указали количество → 1
+        count = int(parts[3]) if len(parts) >= 4 else 1
+
+        # если перепутали
         if a > b:
             a, b = b, a
 
@@ -45,31 +47,46 @@ def rand(message):
         if count > range_size:
             bot.send_message(
                 message.chat.id,
-                f"❌ Ошибка!\nВ диапазоне всего {range_size} уникальных чисел"
+                f"❌ В диапазоне всего {range_size} чисел"
             )
             return
 
         if count > 100:
-            bot.send_message(message.chat.id, "❌ Слишком много чисел (макс 100)")
+            bot.send_message(message.chat.id, "❌ Макс 100 чисел")
             return
 
         numbers = random.sample(range(a, b + 1), count)
-        result = ", ".join(map(str, numbers))
 
-        bot.send_message(
-            message.chat.id,
-            f"🎲 Победители:\n{result}"
-        )
+        if count == 1:
+            bot.send_message(
+                message.chat.id,
+                f"🎲 Число: {numbers[0]}"
+            )
+        else:
+            result = ", ".join(map(str, numbers))
+            bot.send_message(
+                message.chat.id,
+                f"🎲 Победители:\n{result}"
+            )
 
     except Exception as e:
-        print("Ошибка в /rand:", e)
+        print("Ошибка:", e)
         bot.send_message(
             message.chat.id,
             "❌ Ошибка!\nПример: /rand 1 10 3"
         )
 
 
-# 🔥 ВАЖНО: вечный цикл (чтобы бот не падал)
+# (опционально) ответ на любые сообщения
+@bot.message_handler(func=lambda message: True)
+def handle_all(message):
+    bot.send_message(
+        message.chat.id,
+        "Я понимаю команды 😅\nИспользуй /rand 1 10 3"
+    )
+
+
+# 🔥 защита от падений (ВАЖНО для Railway)
 print("Бот запущен...")
 
 while True:
