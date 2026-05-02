@@ -12,24 +12,20 @@ def start(message):
     bot.send_message(
         message.chat.id,
         "Привет! 👋\n\n"
-        "Я генерирую случайные числа БЕЗ повторов 🎲\n\n"
+        "Я генерирую случайные числа 🎲\n\n"
         "Используй:\n"
         "/roll 1 10 3\n\n"
         "Можно и так:\n"
-        "/roll 1 10 (по умолчанию 1 число)"
+        "/roll 1 50 (одно число)"
     )
 
 
-# Команда /roll
+# 🔥 Команда /roll (вместо /rand)
 @bot.message_handler(commands=['roll'])
-def rand(message):
-    parts = message.text.split()
-
-    # ❗ если не команда /roll — игнор
-    if not message.text.startswith("/rand"):
-        return
-
+def roll(message):
     try:
+        parts = message.text.split()
+
         if len(parts) < 3:
             bot.send_message(message.chat.id, "❗ Пример: /roll 1 10 3")
             return
@@ -37,7 +33,6 @@ def rand(message):
         a = int(parts[1])
         b = int(parts[2])
 
-        # если не указали количество → ставим 1
         count = int(parts[3]) if len(parts) > 3 else 1
 
         if a > b:
@@ -58,15 +53,19 @@ def rand(message):
 
         numbers = random.sample(range(a, b + 1), count)
 
-        result = ", ".join(map(str, numbers))
-
-        bot.send_message(
-            message.chat.id,
-            f"🎲 Выигрышные номера:\n{result}"
-        )
+        if count == 1:
+            bot.send_message(
+                message.chat.id,
+                f"🎲 Число: {numbers[0]}"
+            )
+        else:
+            result = ", ".join(map(str, numbers))
+            bot.send_message(
+                message.chat.id,
+                f"🎲 Результат:\n{result}"
+            )
 
     except ValueError:
-        # ❗ только если реально ошибка ввода
         bot.send_message(message.chat.id, "❌ Пример: /roll 1 10 3")
 
 
