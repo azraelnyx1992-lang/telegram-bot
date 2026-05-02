@@ -21,7 +21,7 @@ def start(message):
 
 
 # Команда /roll
-@bot.message_handler(commands=['rand'])
+@bot.message_handler(commands=['roll'])
 def rand(message):
     parts = message.text.split()
 
