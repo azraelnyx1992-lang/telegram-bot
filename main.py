@@ -14,24 +14,24 @@ def start(message):
         "Привет! 👋\n\n"
         "Я генерирую случайные числа БЕЗ повторов 🎲\n\n"
         "Используй:\n"
-        "/rand 1 10 3\n\n"
+        "/roll 1 10 3\n\n"
         "Можно и так:\n"
-        "/rand 1 10 (по умолчанию 1 число)"
+        "/roll 1 10 (по умолчанию 1 число)"
     )
 
 
-# Команда /rand
+# Команда /roll
 @bot.message_handler(commands=['rand'])
 def rand(message):
     parts = message.text.split()
 
-    # ❗ если не команда /rand — игнор
+    # ❗ если не команда /roll — игнор
     if not message.text.startswith("/rand"):
         return
 
     try:
         if len(parts) < 3:
-            bot.send_message(message.chat.id, "❗ Пример: /rand 1 10 3")
+            bot.send_message(message.chat.id, "❗ Пример: /roll 1 10 3")
             return
 
         a = int(parts[1])
@@ -62,12 +62,12 @@ def rand(message):
 
         bot.send_message(
             message.chat.id,
-            f"🎲 Результат:\n{result}"
+            f"🎲 Выигрышные номера:\n{result}"
         )
 
     except ValueError:
         # ❗ только если реально ошибка ввода
-        bot.send_message(message.chat.id, "❌ Пример: /rand 1 10 3")
+        bot.send_message(message.chat.id, "❌ Пример: /roll 1 10 3")
 
 
 print("Бот запущен...")
